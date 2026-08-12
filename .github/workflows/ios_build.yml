@@ -22,11 +22,16 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build iOS App (No Sign)
-        run: flutter build ipa --no-codesign
+      - name: Build iOS (Simulator - No Signing Required)
+        run: flutter build ios --release --no-codesign --simulator
 
-      - name: Upload iOS App Artifact
+      - name: Zip iOS build
+        run: |
+          cd build/ios/iphonesimulator
+          zip -r ios-simulator-app.zip Runner.app
+
+      - name: Upload iOS Simulator Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ios-app-runner
-          path: build/ios/archive/Runner.xcarchive
+          name: ios-simulator-app
+          path: build/ios/iphonesimulator/ios-simulator-app.zip
