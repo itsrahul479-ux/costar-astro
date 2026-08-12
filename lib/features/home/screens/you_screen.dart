@@ -6,6 +6,12 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/theme/co_star_theme.dart';
 import '../../../core/router/app_router.dart';
 import '../../ai_astrologer/screens/ai_astrologer_dialog.dart';
+import '../../tarot/screens/tarot_screen.dart';
+import '../../horoscope/screens/horoscope_screen.dart';
+import '../../rituals/screens/daily_ritual_screen.dart';
+import '../../transits/screens/transits_screen.dart';
+import '../../journal/screens/journal_screen.dart';
+import '../../love/screens/love_report_screen.dart';
 
 class YouScreen extends ConsumerWidget {
   const YouScreen({super.key});
@@ -165,6 +171,78 @@ class YouScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 20),
 
+          // Quick Feature Shortcuts Grid
+          Text(
+            'COSMIC TOOLS',
+            style: TextStyle(color: colors.textMuted, fontSize: 10, fontFamily: 'monospace'),
+          ),
+          const SizedBox(height: 12),
+          GridView.count(
+            crossAxisCount: 3,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 1.1,
+            children: [
+              _featureShortcut(
+                context,
+                title: '3-CARD TAROT',
+                icon: LucideIcons.sparkles,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const TarotScreen()),
+                ),
+              ),
+              _featureShortcut(
+                context,
+                title: 'FORECAST',
+                icon: LucideIcons.calendar,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HoroscopeScreen()),
+                ),
+              ),
+              _featureShortcut(
+                context,
+                title: 'RITUAL',
+                icon: LucideIcons.flame,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const DailyRitualScreen()),
+                ),
+              ),
+              _featureShortcut(
+                context,
+                title: 'TRANSITS',
+                icon: LucideIcons.compass,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const TransitsScreen()),
+                ),
+              ),
+              _featureShortcut(
+                context,
+                title: 'JOURNAL',
+                icon: LucideIcons.bookOpen,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const JournalScreen()),
+                ),
+              ),
+              _featureShortcut(
+                context,
+                title: 'LOVE REPORT',
+                icon: LucideIcons.heart,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoveReportScreen()),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
           // Ask the Stars AI Banner
           InkWell(
             onTap: () {
@@ -226,6 +304,42 @@ class YouScreen extends ConsumerWidget {
           minHeight: 4,
         ),
       ],
+    );
+  }
+
+  Widget _featureShortcut(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    final colors = CoStarColors.of(context);
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: colors.cardBg,
+          border: Border.all(color: colors.border),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 20, color: colors.textPrimary),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: colors.textPrimary,
+                fontSize: 9,
+                fontFamily: 'monospace',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

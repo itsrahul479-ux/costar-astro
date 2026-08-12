@@ -7,7 +7,9 @@ class CoStarColors {
   const CoStarColors(this.isDark);
 
   Color get bg => isDark ? const Color(0xFF0A0A0A) : const Color(0xFFFFFFFF);
+  Color get background => bg;
   Color get cardBg => isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5);
+  Color get surface => cardBg;
   Color get border => isDark ? const Color(0xFF262626) : const Color(0xFFE0E0E0);
   Color get borderStrong => isDark ? const Color(0xFF404040) : const Color(0xFF000000);
   Color get textPrimary => isDark ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
