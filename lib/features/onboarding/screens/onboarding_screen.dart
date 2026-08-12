@@ -538,8 +538,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Widget _buildLocationStep() {
-    return Padding(
-      padding: const EdgeInsets.all(24),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -547,7 +547,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           const Text('STEP 04 / 05', style: TextStyle(color: Color(0xFF888075), fontSize: 10, fontFamily: 'monospace')),
           const SizedBox(height: 8),
           Text('WHERE WERE YOU BORN?', style: GoogleFonts.cormorantGaramond(fontSize: 32, color: const Color(0xFF2C2823))),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           Container(
             decoration: BoxDecoration(
               color: const Color(0xFFFAF8F3),
@@ -559,6 +559,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 final locStr = "${c['city']}, ${c['country']}";
                 final isSelected = _selectedCity == locStr;
                 return ListTile(
+                  dense: true,
                   title: Text(locStr, style: TextStyle(color: isSelected ? const Color(0xFF2C2823) : const Color(0xFF666056), fontSize: 14, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
                   trailing: isSelected ? const Icon(LucideIcons.check, color: Color(0xFF2C2823), size: 16) : null,
                   onTap: () => setState(() => _selectedCity = locStr),
@@ -566,7 +567,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               }).toList(),
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () => setState(() => _step = 6),
             style: ElevatedButton.styleFrom(
@@ -579,6 +580,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
             child: Text('Continue', style: GoogleFonts.cormorantGaramond(fontSize: 20, fontWeight: FontWeight.bold)),
           ),
+          const SizedBox(height: 16),
         ],
       ),
     );
