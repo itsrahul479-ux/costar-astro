@@ -538,49 +538,56 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Widget _buildLocationStep() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('STEP 04 / 05', style: TextStyle(color: Color(0xFF888075), fontSize: 10, fontFamily: 'monospace')),
           const SizedBox(height: 8),
           Text('WHERE WERE YOU BORN?', style: GoogleFonts.cormorantGaramond(fontSize: 32, color: const Color(0xFF2C2823))),
-          const SizedBox(height: 16),
-          Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFFAF8F3),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE5DDD0)),
-            ),
-            child: Column(
-              children: _citiesMock.map((c) {
-                final locStr = "${c['city']}, ${c['country']}";
-                final isSelected = _selectedCity == locStr;
-                return ListTile(
-                  dense: true,
-                  title: Text(locStr, style: TextStyle(color: isSelected ? const Color(0xFF2C2823) : const Color(0xFF666056), fontSize: 14, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
-                  trailing: isSelected ? const Icon(LucideIcons.check, color: Color(0xFF2C2823), size: 16) : null,
-                  onTap: () => setState(() => _selectedCity = locStr),
-                );
-              }).toList(),
+          const SizedBox(height: 12),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFFAF8F3),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFE5DDD0)),
+              ),
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: _citiesMock.map((c) {
+                  final locStr = "${c['city']}, ${c['country']}";
+                  final isSelected = _selectedCity == locStr;
+                  return ListTile(
+                    dense: true,
+                    title: Text(locStr, style: TextStyle(color: isSelected ? const Color(0xFF2C2823) : const Color(0xFF666056), fontSize: 14, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                    trailing: isSelected ? const Icon(LucideIcons.check, color: Color(0xFF2C2823), size: 16) : null,
+                    onTap: () => setState(() => _selectedCity = locStr),
+                  );
+                }).toList(),
+              ),
             ),
           ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () => setState(() => _step = 6),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFF2EBDC),
-              foregroundColor: const Color(0xFF2C2823),
-              elevation: 0,
-              side: const BorderSide(color: Color(0xFF332E27), width: 1),
-              minimumSize: const Size.fromHeight(54),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          const SizedBox(height: 12),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: ElevatedButton(
+                onPressed: () => setState(() => _step = 6),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFF2EBDC),
+                  foregroundColor: const Color(0xFF2C2823),
+                  elevation: 0,
+                  side: const BorderSide(color: Color(0xFF332E27), width: 1),
+                  minimumSize: const Size.fromHeight(54),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                ),
+                child: Text('Continue', style: GoogleFonts.cormorantGaramond(fontSize: 20, fontWeight: FontWeight.bold)),
+              ),
             ),
-            child: Text('Continue', style: GoogleFonts.cormorantGaramond(fontSize: 20, fontWeight: FontWeight.bold)),
           ),
-          const SizedBox(height: 16),
         ],
       ),
     );
