@@ -296,7 +296,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               minimumSize: const Size.fromHeight(54),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
             ),
-            child: Text('Continue', style: GoogleFonts.cormorantGaramond(fontSize: 20, fontWeight: FontWeight.bold)),
+            child: Text('Continue', style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600)),
           ),
         ],
       ),
@@ -438,8 +438,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
                 child: Text(
                   'Continue',
-                  style: GoogleFonts.cormorantGaramond(
-                    fontSize: 22,
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF2C2823),
                   ),
@@ -498,7 +498,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     const SizedBox(width: 12),
                     Text(
                       _selectedTime.format(context),
-                      style: GoogleFonts.cormorantGaramond(color: const Color(0xFF2C2823), fontSize: 22, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF2C2823),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ],
                 ),
@@ -530,7 +535,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               minimumSize: const Size.fromHeight(54),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
             ),
-            child: Text('Continue', style: GoogleFonts.cormorantGaramond(fontSize: 20, fontWeight: FontWeight.bold)),
+            child: Text('Continue', style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600)),
           ),
         ],
       ),
@@ -584,7 +589,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   minimumSize: const Size.fromHeight(54),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
                 ),
-                child: Text('Continue', style: GoogleFonts.cormorantGaramond(fontSize: 20, fontWeight: FontWeight.bold)),
+                child: Text('Continue', style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600)),
               ),
             ),
           ),
