@@ -23,7 +23,7 @@ class CoStarApp extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
 
     return MaterialApp(
-      title: 'Co-Star Personalized Astrology',
+      title: 'Astro',
       debugShowCheckedModeBanner: false,
       theme: CoStarTheme.lightTheme,
       darkTheme: CoStarTheme.darkTheme,
