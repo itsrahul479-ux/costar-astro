@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:device_preview/device_preview.dart';
 
 import 'core/theme/co_star_theme.dart';
 import 'core/router/app_router.dart';
@@ -11,7 +12,12 @@ import 'features/friends/screens/friends_screen.dart';
 import 'features/profile/screens/profile_screen.dart';
 
 void main() {
-  runApp(const ProviderScope(child: CoStarApp()));
+  runApp(
+    DevicePreview(
+      enabled: true,
+      builder: (context) => const ProviderScope(child: CoStarApp()),
+    ),
+  );
 }
 
 class CoStarApp extends ConsumerWidget {
@@ -24,6 +30,9 @@ class CoStarApp extends ConsumerWidget {
 
     return MaterialApp(
       title: 'Astro',
+      useInheritedMediaQuery: true,
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
       debugShowCheckedModeBanner: false,
       theme: CoStarTheme.lightTheme,
       darkTheme: CoStarTheme.darkTheme,
