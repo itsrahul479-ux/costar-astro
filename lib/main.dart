@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'core/theme/co_star_theme.dart';
 import 'core/router/app_router.dart';
@@ -75,10 +75,10 @@ class MainTabShell extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  _desktopNavItem(context, ref, 0, 'YOU', LucideIcons.sparkles, currentTab),
-                  _desktopNavItem(context, ref, 1, 'CHART', LucideIcons.compass, currentTab),
-                  _desktopNavItem(context, ref, 2, 'FRIENDS', LucideIcons.users, currentTab),
-                  _desktopNavItem(context, ref, 3, 'PROFILE', LucideIcons.user, currentTab),
+                  _desktopNavItem(context, ref, 0, 'YOU', 'assets/iconly/Iconly-Activity-1785711094496.svg', currentTab),
+                  _desktopNavItem(context, ref, 1, 'CHART', 'assets/iconly/Iconly-Chart-1785711094531.svg', currentTab),
+                  _desktopNavItem(context, ref, 2, 'FRIENDS', 'assets/iconly/Iconly-3-user-1785711132388.svg', currentTab),
+                  _desktopNavItem(context, ref, 3, 'PROFILE', 'assets/iconly/Iconly-User-1785711094502.svg', currentTab),
                 ],
               ),
             ),
@@ -113,21 +113,65 @@ class MainTabShell extends ConsumerWidget {
                 selectedLabelStyle: const TextStyle(fontFamily: 'monospace', fontSize: 10, fontWeight: FontWeight.bold),
                 unselectedLabelStyle: const TextStyle(fontFamily: 'monospace', fontSize: 10),
                 type: BottomNavigationBarType.fixed,
-                items: const [
-                  BottomNavigationBarSpan(
-                    icon: Icon(LucideIcons.sparkles, size: 18),
+                items: [
+                  BottomNavigationBarItem(
+                    icon: SvgPicture.asset(
+                      'assets/iconly/Iconly-Activity-1785711094496.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(colors.textMuted, BlendMode.srcIn),
+                    ),
+                    activeIcon: SvgPicture.asset(
+                      'assets/iconly/Iconly-Activity-1785711094496.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(colors.textPrimary, BlendMode.srcIn),
+                    ),
                     label: 'YOU',
                   ),
-                  BottomNavigationBarSpan(
-                    icon: Icon(LucideIcons.compass, size: 18),
+                  BottomNavigationBarItem(
+                    icon: SvgPicture.asset(
+                      'assets/iconly/Iconly-Chart-1785711094531.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(colors.textMuted, BlendMode.srcIn),
+                    ),
+                    activeIcon: SvgPicture.asset(
+                      'assets/iconly/Iconly-Chart-1785711094531.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(colors.textPrimary, BlendMode.srcIn),
+                    ),
                     label: 'CHART',
                   ),
-                  BottomNavigationBarSpan(
-                    icon: Icon(LucideIcons.users, size: 18),
+                  BottomNavigationBarItem(
+                    icon: SvgPicture.asset(
+                      'assets/iconly/Iconly-3-user-1785711132388.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(colors.textMuted, BlendMode.srcIn),
+                    ),
+                    activeIcon: SvgPicture.asset(
+                      'assets/iconly/Iconly-3-user-1785711132388.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(colors.textPrimary, BlendMode.srcIn),
+                    ),
                     label: 'FRIENDS',
                   ),
-                  BottomNavigationBarSpan(
-                    icon: Icon(LucideIcons.user, size: 18),
+                  BottomNavigationBarItem(
+                    icon: SvgPicture.asset(
+                      'assets/iconly/Iconly-User-1785711094502.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(colors.textMuted, BlendMode.srcIn),
+                    ),
+                    activeIcon: SvgPicture.asset(
+                      'assets/iconly/Iconly-User-1785711094502.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(colors.textPrimary, BlendMode.srcIn),
+                    ),
                     label: 'PROFILE',
                   ),
                 ],
@@ -136,7 +180,7 @@ class MainTabShell extends ConsumerWidget {
     );
   }
 
-  Widget _desktopNavItem(BuildContext context, WidgetRef ref, int index, String label, IconData icon, int currentTab) {
+  Widget _desktopNavItem(BuildContext context, WidgetRef ref, int index, String label, String svgPath, int currentTab) {
     final colors = CoStarColors.of(context);
     final isSelected = currentTab == index;
     return InkWell(
@@ -151,7 +195,12 @@ class MainTabShell extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, size: 18, color: isSelected ? colors.textPrimary : colors.textMuted),
+            SvgPicture.asset(
+              svgPath,
+              width: 18,
+              height: 18,
+              colorFilter: ColorFilter.mode(isSelected ? colors.textPrimary : colors.textMuted, BlendMode.srcIn),
+            ),
             const SizedBox(width: 12),
             Text(
               label,
