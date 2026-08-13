@@ -14,17 +14,47 @@ class DailyRitualScreen extends ConsumerStatefulWidget {
 class _DailyRitualScreenState extends ConsumerState<DailyRitualScreen> {
   bool _isCompleted = false;
 
-  final Map<String, String> _todayRitual = {
-    'title': 'THE GROUNDING STILLNESS',
-    'duration': '5 MINS',
-    'element': 'EARTH & AIR',
-    'affirmation': 'I release what I cannot control and step boldly into presence.',
-    'action': 'Light a single candle or sit by a window. Take 5 deep breaths, exhaling every expectation of perfection.',
-  };
+  Map<String, String> _getTodayRitual() {
+    final now = DateTime.now();
+    final rituals = [
+      {
+        'title': 'THE GROUNDING STILLNESS',
+        'duration': '5 MINS',
+        'element': 'EARTH & AIR',
+        'affirmation': 'I release what I cannot control and step boldly into presence.',
+        'action': 'Light a single candle or sit near natural light. Take 5 deep, deliberate breaths, exhaling every expectation of perfection.',
+      },
+      {
+        'title': 'CLEARING INTELLECTUAL FOG',
+        'duration': '7 MINS',
+        'element': 'WATER & FIRE',
+        'affirmation': 'My clarity is unshakeable; my priorities are sharp.',
+        'action': 'Write down 3 things weighing on your mind. Draw a line through each and focus entirely on your immediate action item.',
+      },
+      {
+        'title': 'SOLAR PLEXUS ACTIVATION',
+        'duration': '4 MINS',
+        'element': 'FIRE & ETHER',
+        'affirmation': 'I honor my vitality and trust the timing of my progress.',
+        'action': 'Stand tall with feet shoulder-width apart. Inhale for 4 seconds, hold for 4 seconds, and exhale for 6 seconds.',
+      },
+      {
+        'title': 'THE SACRED PAUSE',
+        'duration': '6 MINS',
+        'element': 'COSMIC ETHER',
+        'affirmation': 'Silence restores my strength. I am grounded in this moment.',
+        'action': 'Disconnect from all screens. Close your eyes and observe the sensations in your body without judging them.',
+      },
+    ];
+
+    final index = (now.day + now.month * 3) % rituals.length;
+    return rituals[index];
+  }
 
   @override
   Widget build(BuildContext context) {
     final colors = CoStarColors.of(context);
+    final _todayRitual = _getTodayRitual();
 
     return Scaffold(
       backgroundColor: colors.background,
