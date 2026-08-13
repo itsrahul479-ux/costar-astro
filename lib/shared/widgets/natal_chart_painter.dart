@@ -75,22 +75,44 @@ class NatalChartPainter extends CustomPainter {
 
       // Element-based Color
       final sign = ZodiacSign.values[i];
-      Color elementColor;
-      switch (sign.element) {
-        case 'Fire':
-          elementColor = const Color(0xFFFF5722); // Vibrant Fire Orange/Red
+      Color badgeColor;
+      switch (sign) {
+        case ZodiacSign.aries:
+          badgeColor = const Color(0xFFEF4444); // Crimson Red
           break;
-        case 'Earth':
-          elementColor = const Color(0xFF10B981); // Emerald Green
+        case ZodiacSign.taurus:
+          badgeColor = const Color(0xFFF97316); // Warm Orange
           break;
-        case 'Air':
-          elementColor = const Color(0xFF06B6D4); // Cyan / Celestial Blue
+        case ZodiacSign.gemini:
+          badgeColor = const Color(0xFFF59E0B); // Amber / Golden
           break;
-        case 'Water':
-          elementColor = const Color(0xFF8B5CF6); // Deep Mystic Purple
+        case ZodiacSign.cancer:
+          badgeColor = const Color(0xFFEAB308); // Yellow
           break;
-        default:
-          elementColor = strokeColor;
+        case ZodiacSign.leo:
+          badgeColor = const Color(0xFFFACC15); // Sun Yellow
+          break;
+        case ZodiacSign.virgo:
+          badgeColor = const Color(0xFF84CC16); // Lime Green
+          break;
+        case ZodiacSign.libra:
+          badgeColor = const Color(0xFF10B981); // Emerald Green
+          break;
+        case ZodiacSign.scorpio:
+          badgeColor = const Color(0xFF06B6D4); // Teal / Cyan
+          break;
+        case ZodiacSign.sagittarius:
+          badgeColor = const Color(0xFF3B82F6); // Royal Blue
+          break;
+        case ZodiacSign.capricorn:
+          badgeColor = const Color(0xFF6366F1); // Indigo
+          break;
+        case ZodiacSign.aquarius:
+          badgeColor = const Color(0xFF8B5CF6); // Purple
+          break;
+        case ZodiacSign.pisces:
+          badgeColor = const Color(0xFFEC4899); // Magenta / Pink
+          break;
       }
 
       final midAngle = signAngle + (pi / 12);
@@ -98,11 +120,17 @@ class NatalChartPainter extends CustomPainter {
       final gx = center.dx + cos(midAngle) * glyphR;
       final gy = center.dy + sin(midAngle) * glyphR;
 
+      // Draw Colored Circle Badge (matching the screenshot)
+      final badgePaint = Paint()
+        ..color = badgeColor
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(Offset(gx, gy), 11.5, badgePaint);
+
       textPainter.text = TextSpan(
         text: sign.symbol,
-        style: TextStyle(
-          color: elementColor,
-          fontSize: 16,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 13,
           fontWeight: FontWeight.bold,
           fontFamily: 'serif',
         ),
@@ -173,53 +201,19 @@ class NatalChartPainter extends CustomPainter {
       canvas.drawLine(Offset(ax1, ay1), Offset(ax2, ay2), aspPaint);
     }
 
-    // 4. Draw Planetary Nodes with Color Accents
+    // 4. Draw Planetary Nodes matching the mobile screenshot
     for (final planet in chart.planets) {
       final angle = rotationOffset + (planet.sign.index + planet.degree / 30) * (pi / 6);
       final px = center.dx + cos(angle) * houseRadius;
       final py = center.dy + sin(angle) * houseRadius;
 
       final isHovered = hoveredPlanet?.name == planet.name;
-      final nodeR = isHovered ? 15.0 : 11.0;
+      final nodeR = isHovered ? 14.0 : 10.5;
 
-      Color planetGlowColor;
-      switch (planet.name.toLowerCase()) {
-        case 'sun':
-          planetGlowColor = const Color(0xFFF59E0B); // Gold
-          break;
-        case 'moon':
-          planetGlowColor = const Color(0xFF93C5FD); // Lunar Blue
-          break;
-        case 'mars':
-          planetGlowColor = const Color(0xFFEF4444); // Red
-          break;
-        case 'venus':
-          planetGlowColor = const Color(0xFFEC4899); // Rose Pink
-          break;
-        case 'jupiter':
-          planetGlowColor = const Color(0xFFA855F7); // Royal Purple
-          break;
-        case 'saturn':
-          planetGlowColor = const Color(0xFFD97706); // Amber
-          break;
-        case 'mercury':
-          planetGlowColor = const Color(0xFF10B981); // Emerald
-          break;
-        default:
-          planetGlowColor = const Color(0xFF6366F1); // Indigo
-      }
-
-      // Outer glow for hovered or prominent planets
-      canvas.drawCircle(
-        Offset(px, py),
-        nodeR + 3,
-        Paint()..color = planetGlowColor.withOpacity(isHovered ? 0.4 : 0.15),
-      );
-
-      final nodeFillPaint = Paint()..color = isDark ? const Color(0xFF18181B) : Colors.white;
+      final nodeFillPaint = Paint()..color = isDark ? const Color(0xFF1E1E1E) : Colors.white;
       final nodeStrokePaint = Paint()
-        ..color = planetGlowColor
-        ..strokeWidth = isHovered ? 2.0 : 1.4
+        ..color = strokeColor
+        ..strokeWidth = 1.3
         ..style = PaintingStyle.stroke;
 
       canvas.drawCircle(Offset(px, py), nodeR, nodeFillPaint);
@@ -228,7 +222,7 @@ class NatalChartPainter extends CustomPainter {
       textPainter.text = TextSpan(
         text: planet.symbol,
         style: TextStyle(
-          color: planetGlowColor,
+          color: strokeColor,
           fontSize: 12,
           fontWeight: FontWeight.bold,
           fontFamily: 'serif',

@@ -120,7 +120,27 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text('${planet.sign.symbol} ${planet.sign.displayName}', style: TextStyle(color: colors.textPrimary, fontSize: 11, fontFamily: 'monospace')),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 16,
+                            height: 16,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: _getZodiacColor(planet.sign),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              planet.sign.symbol,
+                              style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          Text(planet.sign.displayName, style: TextStyle(color: colors.textPrimary, fontSize: 11, fontFamily: 'monospace')),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
                       Text('${planet.degree}° • House ${planet.house}', style: TextStyle(color: colors.textMuted, fontSize: 9, fontFamily: 'monospace')),
                     ],
                   ),
@@ -181,6 +201,23 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
         ],
       ),
     );
+  }
+
+  Color _getZodiacColor(ZodiacSign sign) {
+    switch (sign) {
+      case ZodiacSign.aries: return const Color(0xFFEF4444);
+      case ZodiacSign.taurus: return const Color(0xFFF97316);
+      case ZodiacSign.gemini: return const Color(0xFFF59E0B);
+      case ZodiacSign.cancer: return const Color(0xFFEAB308);
+      case ZodiacSign.leo: return const Color(0xFFFACC15);
+      case ZodiacSign.virgo: return const Color(0xFF84CC16);
+      case ZodiacSign.libra: return const Color(0xFF10B981);
+      case ZodiacSign.scorpio: return const Color(0xFF06B6D4);
+      case ZodiacSign.sagittarius: return const Color(0xFF3B82F6);
+      case ZodiacSign.capricorn: return const Color(0xFF6366F1);
+      case ZodiacSign.aquarius: return const Color(0xFF8B5CF6);
+      case ZodiacSign.pisces: return const Color(0xFFEC4899);
+    }
   }
 
   Widget _legendDot(Color color, String label) {
