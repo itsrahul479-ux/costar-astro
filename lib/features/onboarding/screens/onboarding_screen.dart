@@ -964,47 +964,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           Expanded(
             child: _selectedCityData == null
                 ? (query.isEmpty
-                    // Default / Search Suggestion List (Image 3)
-                    ? ListView.separated(
-                        itemCount: matchingCities.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 16),
-                        itemBuilder: (context, index) {
-                          final c = matchingCities[index];
-                          return InkWell(
-                            onTap: () {
-                              setState(() {
-                                _selectedCityData = c;
-                                _selectedCity = "${c['name']}, ${c['country']}";
-                                _citySearchController.text = c['name'];
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    c['name'] as String,
-                                    style: GoogleFonts.cormorantGaramond(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600,
-                                      color: const Color(0xFF3A342D),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    "${c['state']}, ${c['country']}",
-                                    style: GoogleFonts.inter(
-                                      fontSize: 12,
-                                      color: const Color(0xFF888075),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      )
-                    // Active Search Result (Image 1: Dropdown card with flag)
+                    // Keep clean when not searching
+                    ? const SizedBox()
+                    // Active Search Result (Dropdown card with flag)
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
