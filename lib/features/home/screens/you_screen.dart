@@ -12,6 +12,8 @@ import '../../rituals/screens/daily_ritual_screen.dart';
 import '../../transits/screens/transits_screen.dart';
 import '../../journal/screens/journal_screen.dart';
 import '../../love/screens/love_report_screen.dart';
+import '../../love/screens/soulmate_portrait_screen.dart';
+import '../../love/screens/relationship_timeline_screen.dart';
 
 class YouScreen extends ConsumerWidget {
   const YouScreen({super.key});
@@ -232,11 +234,20 @@ class YouScreen extends ConsumerWidget {
               ),
               _featureShortcut(
                 context,
-                title: 'LOVE REPORT',
-                icon: LucideIcons.heart,
+                title: 'SOULMATE PORTRAIT',
+                icon: LucideIcons.userCheck,
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const LoveReportScreen()),
+                  MaterialPageRoute(builder: (_) => const SoulmatePortraitScreen()),
+                ),
+              ),
+              _featureShortcut(
+                context,
+                title: 'LOVE TIMELINE',
+                icon: LucideIcons.clock,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const RelationshipTimelineScreen()),
                 ),
               ),
             ],
