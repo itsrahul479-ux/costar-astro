@@ -101,7 +101,7 @@ class TransitsScreen extends ConsumerWidget {
         itemCount: transits.length,
         separatorBuilder: (_, __) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
-          final t = transits[index];
+          final item = transits[index];
           return Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
