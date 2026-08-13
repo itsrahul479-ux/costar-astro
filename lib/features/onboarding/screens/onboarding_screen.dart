@@ -119,13 +119,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFAF8F3), // Warm off-white / light cream
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Top Bar with Back Arrow & Star Progress Indicators
-            if (_step > 1 && _step < 8) _buildTopNavigation(),
-            Expanded(child: _buildCurrentStep()),
-          ],
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 540),
+          child: SafeArea(
+            child: Column(
+              children: [
+                // Top Bar with Back Arrow & Star Progress Indicators
+                if (_step > 1 && _step < 8) _buildTopNavigation(),
+                Expanded(child: _buildCurrentStep()),
+              ],
+            ),
+          ),
         ),
       ),
     );
