@@ -547,56 +547,506 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
+  final TextEditingController _citySearchController = TextEditingController();
+  Map<String, dynamic>? _selectedCityData;
+
+  final List<Map<String, dynamic>> _expandedCities = const [
+    {
+      'name': 'Vasai-Virar City',
+      'state': 'Maharashtra',
+      'country': 'India',
+      'flag': '🇮🇳',
+      'lat': 19.46,
+      'lng': 72.81,
+      'subLocations': [
+        'Vasai East Salt Plant\nVasai East, Vasai-Virar, Maharashtra, India',
+        'Vasai East\nVasai, Maharashtra, India',
+        'Vasai Phata\nPelhar, Maharashtra, India',
+        'Vasai West\nVasai, Maharashtra, India',
+        'Vasai\nAhmedabad, Gujarat, India',
+      ],
+    },
+    {
+      'name': 'Mumbai',
+      'state': 'Maharashtra',
+      'country': 'India',
+      'flag': '🇮🇳',
+      'lat': 19.0760,
+      'lng': 72.8777,
+      'subLocations': ['Mumbai Suburban, Maharashtra, India', 'South Mumbai, Maharashtra, India'],
+    },
+    {
+      'name': 'New Delhi',
+      'state': 'Delhi',
+      'country': 'India',
+      'flag': '🇮🇳',
+      'lat': 28.6139,
+      'lng': 77.2090,
+      'subLocations': ['Central Delhi, Delhi, India', 'South Delhi, Delhi, India'],
+    },
+    {
+      'name': 'Bengaluru',
+      'state': 'Karnataka',
+      'country': 'India',
+      'flag': '🇮🇳',
+      'lat': 12.9716,
+      'lng': 77.5946,
+      'subLocations': ['Bengaluru Urban, Karnataka, India', 'Electronic City, Bengaluru, India'],
+    },
+    {
+      'name': 'New York',
+      'state': 'New York',
+      'country': 'USA',
+      'flag': '🇺🇸',
+      'lat': 40.7128,
+      'lng': -74.0060,
+      'subLocations': ['Manhattan, NY, USA', 'Brooklyn, NY, USA', 'Queens, NY, USA'],
+    },
+    {
+      'name': 'London',
+      'state': 'Greater London',
+      'country': 'UK',
+      'flag': '🇬🇧',
+      'lat': 51.5074,
+      'lng': -0.1278,
+      'subLocations': ['City of London, UK', 'Westminster, London, UK'],
+    },
+    {
+      'name': 'Paris',
+      'state': 'Île-de-France',
+      'country': 'France',
+      'flag': '🇫🇷',
+      'lat': 48.8566,
+      'lng': 2.3522,
+      'subLocations': ['Paris Center, France', 'Montmartre, Paris, France'],
+    },
+    {
+      'name': 'Tokyo',
+      'state': 'Kanto',
+      'country': 'Japan',
+      'flag': '🇯🇵',
+      'lat': 35.6762,
+      'lng': 139.6503,
+      'subLocations': ['Shinjuku, Tokyo, Japan', 'Shibuya, Tokyo, Japan'],
+    },
+  ];
+
+  // ----------------------------------------------------
+  // EXACT UI REPLICATION FOR WHERE WERE YOU BORN SCREEN
+  // Matches all 3 user screenshots (Search, Card & Dark Celestial Map)
+  // ----------------------------------------------------
   Widget _buildLocationStep() {
+    final query = _citySearchController.text.trim().toLowerCase();
+
+    // Filter matching cities
+    final matchingCities = query.isEmpty
+        ? _expandedCities
+        : _expandedCities.where((c) {
+            final name = (c['name'] as String).toLowerCase();
+            final state = (c['state'] as String).toLowerCase();
+            final country = (c['country'] as String).toLowerCase();
+            return name.contains(query) || state.contains(query) || country.contains(query);
+          }).toList();
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('STEP 04 / 05', style: TextStyle(color: Color(0xFF888075), fontSize: 10, fontFamily: 'monospace')),
-          const SizedBox(height: 8),
-          Text('WHERE WERE YOU BORN?', style: GoogleFonts.cormorantGaramond(fontSize: 32, color: const Color(0xFF2C2823))),
-          const SizedBox(height: 12),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFFAF8F3),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFE5DDD0)),
-              ),
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: _citiesMock.map((c) {
-                  final locStr = "${c['city']}, ${c['country']}";
-                  final isSelected = _selectedCity == locStr;
-                  return ListTile(
-                    dense: true,
-                    title: Text(locStr, style: TextStyle(color: isSelected ? const Color(0xFF2C2823) : const Color(0xFF666056), fontSize: 14, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
-                    trailing: isSelected ? const Icon(LucideIcons.check, color: Color(0xFF2C2823), size: 16) : null,
-                    onTap: () => setState(() => _selectedCity = locStr),
-                  );
-                }).toList(),
-              ),
+          // Header Headline
+          Text(
+            'Where were you born?',
+            style: GoogleFonts.cormorantGaramond(
+              fontSize: 34,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF2C2823),
+              height: 1.25,
             ),
           ),
-          const SizedBox(height: 12),
-          SafeArea(
-            top: false,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: ElevatedButton(
-                onPressed: () => setState(() => _step = 6),
+          const SizedBox(height: 6),
+          Text(
+            'Your chart is drawn from the sky\nabove your first breath.',
+            style: GoogleFonts.cormorantGaramond(
+              fontSize: 18,
+              color: const Color(0xFF5A5349),
+              height: 1.3,
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Search Field with Underline & Clear 'x'
+          Row(
+            children: [
+              if (_selectedCityData != null) ...[
+                Text(
+                  _selectedCityData!['flag'] ?? '📍',
+                  style: const TextStyle(fontSize: 24),
+                ),
+                const SizedBox(width: 10),
+              ],
+              Expanded(
+                child: TextField(
+                  controller: _citySearchController,
+                  style: GoogleFonts.cormorantGaramond(
+                    fontSize: 24,
+                    color: const Color(0xFF2C2823),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  decoration: const InputDecoration(
+                    hintText: 'Search city...',
+                    hintStyle: TextStyle(color: Color(0xFFB0A89C), fontSize: 20),
+                    border: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF9E9689), width: 1),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF332E27), width: 1.5),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(vertical: 6),
+                  ),
+                  onChanged: (val) {
+                    setState(() {
+                      if (_selectedCityData != null && _selectedCityData!['name'] != val) {
+                        _selectedCityData = null;
+                      }
+                    });
+                  },
+                ),
+              ),
+              if (_citySearchController.text.isNotEmpty)
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _citySearchController.clear();
+                      _selectedCityData = null;
+                    });
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.only(left: 8, bottom: 4),
+                    child: Icon(Icons.close, size: 20, color: Color(0xFF6B6358)),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Main Interactive Area
+          Expanded(
+            child: _selectedCityData == null
+                ? (query.isEmpty
+                    // Default / Search Suggestion List (Image 3)
+                    ? ListView.separated(
+                        itemCount: matchingCities.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 16),
+                        itemBuilder: (context, index) {
+                          final c = matchingCities[index];
+                          return InkWell(
+                            onTap: () {
+                              setState(() {
+                                _selectedCityData = c;
+                                _selectedCity = "${c['name']}, ${c['country']}";
+                                _citySearchController.text = c['name'];
+                              });
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    c['name'] as String,
+                                    style: GoogleFonts.cormorantGaramond(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFF3A342D),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    "${c['state']}, ${c['country']}",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 12,
+                                      color: const Color(0xFF888075),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    // Active Search Result (Image 1: Dropdown card with flag)
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              final c = matchingCities.isNotEmpty ? matchingCities.first : _expandedCities.first;
+                              setState(() {
+                                _selectedCityData = c;
+                                _selectedCity = "${c['name']}, ${c['country']}";
+                                _citySearchController.text = c['name'];
+                              });
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.06),
+                                    blurRadius: 16,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                                border: Border.all(color: const Color(0xFFEFE8DA), width: 1),
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    matchingCities.isNotEmpty ? (matchingCities.first['flag'] ?? '🇮🇳') : '🇮🇳',
+                                    style: const TextStyle(fontSize: 32),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        matchingCities.isNotEmpty ? (matchingCities.first['name'] as String) : 'Vasai-Virar City',
+                                        style: GoogleFonts.cormorantGaramond(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: const Color(0xFF2C2823),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        matchingCities.isNotEmpty ? "${matchingCities.first['state']}, ${matchingCities.first['country']}" : "Maharashtra, India",
+                                        style: GoogleFonts.inter(
+                                          fontSize: 13,
+                                          color: const Color(0xFF6B6358),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ))
+                // Selected City State (Image 2: Dark Cosmic Night Map & Coordinates Card)
+                : Column(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 210,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10131A), // Deep dark cosmic navy
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.18),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Stack(
+                            children: [
+                              // Subtle Coastline & Ocean Map Graphic
+                              CustomPaint(
+                                size: const Size(double.infinity, 210),
+                                painter: _CosmicMapPainter(),
+                              ),
+
+                              // Map City Labels
+                              const Positioned(
+                                top: 22,
+                                left: 0,
+                                right: 0,
+                                child: Center(
+                                  child: Text(
+                                    'Surat',
+                                    style: TextStyle(
+                                      color: Color(0xFF9EABB8),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const Positioned(
+                                right: 16,
+                                top: 120,
+                                child: Text(
+                                  'MAHARASHTRA',
+                                  style: TextStyle(
+                                    color: Color(0xFF5E6B7A),
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.2,
+                                  ),
+                                ),
+                              ),
+                              const Positioned(
+                                right: 100,
+                                top: 140,
+                                child: Text(
+                                  'Pune',
+                                  style: TextStyle(
+                                    color: Color(0xFF64748B),
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ),
+
+                              // Selected Glowing City Pin (Golden ring)
+                              Positioned(
+                                top: 88,
+                                left: 0,
+                                right: 0,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: 22,
+                                      height: 22,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: const Color(0xFFD4AF37), width: 3),
+                                        color: const Color(0xFF1E2430),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color(0xFFD4AF37).withOpacity(0.4),
+                                            blurRadius: 10,
+                                            spreadRadius: 2,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    const Text(
+                                      'Mumbai',
+                                      style: TextStyle(
+                                        color: Color(0xFFE2E8F0),
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // Dark Bottom Gradient Plate with Gold Coordinates
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        const Color(0xFF0F172A).withOpacity(0.0),
+                                        const Color(0xFF0B0F19).withOpacity(0.95),
+                                      ],
+                                    ),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${_selectedCityData!['name']}, ${_selectedCityData!['country']}",
+                                        style: GoogleFonts.cormorantGaramond(
+                                          fontSize: 19,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFFE2C99B), // Soft Gold
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        "${_selectedCityData!['lat']}° N  ·  ${_selectedCityData!['lng']}° E",
+                                        style: GoogleFonts.inter(
+                                          fontSize: 13,
+                                          color: const Color(0xFF94A3B8),
+                                          letterSpacing: 0.8,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      Text(
+                        'The sky over ${_selectedCityData!['name']}, the\nmoment you arrived.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.cormorantGaramond(
+                          fontSize: 19,
+                          color: const Color(0xFF4A443C),
+                          height: 1.3,
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+
+          // Bottom Action: Continue Button + Privacy Note (Matches Screenshot)
+          Column(
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  if (_selectedCityData == null && matchingCities.isNotEmpty) {
+                    final c = matchingCities.first;
+                    setState(() {
+                      _selectedCityData = c;
+                      _selectedCity = "${c['name']}, ${c['country']}";
+                    });
+                  }
+                  setState(() => _step = 6);
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFF2EBDC),
                   foregroundColor: const Color(0xFF2C2823),
                   elevation: 0,
                   side: const BorderSide(color: Color(0xFF332E27), width: 1),
-                  minimumSize: const Size.fromHeight(54),
+                  minimumSize: const Size.fromHeight(56),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
                 ),
-                child: Text('Continue', style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600)),
+                child: Text(
+                  'Continue',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF2C2823),
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(LucideIcons.lock, size: 12, color: Color(0xFF888075)),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Never shared. Stored only on your device',
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      color: const Color(0xFF888075),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
           ),
         ],
       ),
@@ -711,4 +1161,56 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       ),
     );
   }
+}
+
+class _CosmicMapPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 1. Dark Ocean Background
+    final oceanPaint = Paint()..color = const Color(0xFF0C1017);
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), oceanPaint);
+
+    // 2. Landmass & Coastline Geometry (West Coast of India style)
+    final landPaint = Paint()
+      ..color = const Color(0xFF161C26)
+      ..style = PaintingStyle.fill;
+
+    final coastPath = Path()
+      ..moveTo(size.width * 0.42, 0)
+      ..cubicTo(size.width * 0.40, 40, size.width * 0.44, 70, size.width * 0.46, 95)
+      ..cubicTo(size.width * 0.48, 120, size.width * 0.47, 150, size.width * 0.52, size.height)
+      ..lineTo(size.width, size.height)
+      ..lineTo(size.width, 0)
+      ..close();
+
+    canvas.drawPath(coastPath, landPaint);
+
+    // 3. Glowing Coastline Edge
+    final coastBorderPaint = Paint()
+      ..color = const Color(0xFF334155).withOpacity(0.5)
+      ..strokeWidth = 1.2
+      ..style = PaintingStyle.stroke;
+
+    final coastLine = Path()
+      ..moveTo(size.width * 0.42, 0)
+      ..cubicTo(size.width * 0.40, 40, size.width * 0.44, 70, size.width * 0.46, 95)
+      ..cubicTo(size.width * 0.48, 120, size.width * 0.47, 150, size.width * 0.52, size.height);
+
+    canvas.drawPath(coastLine, coastBorderPaint);
+
+    // 4. Subtle Cosmic Grid Lines
+    final gridPaint = Paint()
+      ..color = const Color(0xFF334155).withOpacity(0.12)
+      ..strokeWidth = 0.8;
+
+    for (double x = 40; x < size.width; x += 50) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), gridPaint);
+    }
+    for (double y = 30; y < size.height; y += 40) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
