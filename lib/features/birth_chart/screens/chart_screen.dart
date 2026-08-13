@@ -55,31 +55,33 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
           const SizedBox(height: 24),
 
           // CustomPainter Wheel Container
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: colors.cardBg,
-              border: Border.all(color: colors.border),
-            ),
-            child: Column(
-              children: [
-                Text(
-                  'INTERACTIVE 360° WHEEL',
-                  style: TextStyle(color: colors.textMuted, fontSize: 9, fontFamily: 'monospace'),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: 300,
-                  height: 300,
-                  child: CustomPaint(
-                    painter: NatalChartPainter(
-                      chart: chart,
-                      hoveredPlanet: _selectedPlanet,
-                      isDark: colors.isDark,
+          Center(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: colors.cardBg,
+                border: Border.all(color: colors.border),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    'INTERACTIVE 360° WHEEL',
+                    style: TextStyle(color: colors.textMuted, fontSize: 9, fontFamily: 'monospace'),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: 300,
+                    height: 300,
+                    child: CustomPaint(
+                      painter: NatalChartPainter(
+                        chart: chart,
+                        hoveredPlanet: _selectedPlanet,
+                        isDark: colors.isDark,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 24),
