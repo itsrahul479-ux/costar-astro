@@ -473,74 +473,198 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
+  // ----------------------------------------------------
+  // EXACT UI REPLICATION FOR BIRTH TIME SCREEN
+  // Matches the Cupertino wheel slider & luxury layout of the Date screen
+  // ----------------------------------------------------
   Widget _buildTimeStep() {
+    final hourFormatted = _selectedTime.hourOfPeriod == 0 ? 12 : _selectedTime.hourOfPeriod;
+    final minuteFormatted = _selectedTime.minute.toString().padLeft(2, '0');
+    final periodFormatted = _selectedTime.period == DayPeriod.am ? 'AM' : 'PM';
+    final formattedTimeDisplay = '$hourFormatted:$minuteFormatted $periodFormatted';
+
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text('STEP 03 / 05', style: TextStyle(color: Color(0xFF888075), fontSize: 10, fontFamily: 'monospace')),
-          const SizedBox(height: 8),
-          Text('WHAT TIME WERE YOU BORN?', style: GoogleFonts.cormorantGaramond(fontSize: 32, color: const Color(0xFF2C2823))),
-          const SizedBox(height: 24),
-          if (!_isTimeUnknown)
-            InkWell(
-              onTap: () async {
-                final picked = await showTimePicker(context: context, initialTime: _selectedTime);
-                if (picked != null) setState(() => _selectedTime = picked);
-              },
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF2EBDC),
-                  borderRadius: BorderRadius.circular(26),
-                  border: Border.all(color: const Color(0xFF332E27)),
+          // Header Headline
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'What time were you\nborn?',
+                style: GoogleFonts.cormorantGaramond(
+                  fontSize: 34,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFF2C2823),
+                  height: 1.25,
                 ),
-                child: Row(
+              ),
+              const SizedBox(height: 20),
+
+              // Selected Time Main Display Text
+              Center(
+                child: Column(
                   children: [
-                    const Icon(LucideIcons.clock, color: Color(0xFF2C2823), size: 20),
-                    const SizedBox(width: 12),
                     Text(
-                      _selectedTime.format(context),
+                      _isTimeUnknown ? 'Time Unknown' : formattedTimeDisplay,
+                      style: GoogleFonts.cormorantGaramond(
+                        fontSize: 34,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF1E1A16),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _isTimeUnknown
+                          ? '12:00 PM will be used as standard noon time'
+                          : 'Used for precise rising sign & house calculations',
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF2C2823),
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
+                        fontSize: 13,
+                        color: const Color(0xFF6B6358),
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-          const SizedBox(height: 16),
+            ],
+          ),
+
+          // Wheel Time Picker Slider (matching date screen structure)
+          Expanded(
+            child: _isTimeUnknown
+                ? Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF2EBDC).withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: const Color(0xFFE2D7C3)),
+                      ),
+                      child: Text(
+                        'Approximate chart will be calculated without exact houses.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.cormorantGaramond(
+                          fontSize: 16,
+                          color: const Color(0xFF4A443C),
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(
+                    margin: const EdgeInsets.symmetric(vertical: 12),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Center Highlighted Pill Container (matching Date screen)
+                        Container(
+                          height: 52,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF2EBDC).withAlpha(200),
+                            borderRadius: BorderRadius.circular(26),
+                            border: Border.all(color: const Color(0xFFE2D7C3), width: 1.2),
+                          ),
+                        ),
+
+                        // Cupertino Time Picker Wheel
+                        CupertinoTheme(
+                          data: CupertinoThemeData(
+                            textTheme: CupertinoTextThemeData(
+                              dateTimePickerTextStyle: GoogleFonts.cormorantGaramond(
+                                fontSize: 24,
+                                color: const Color(0xFF2C2823),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          child: CupertinoDatePicker(
+                            mode: CupertinoDatePickerMode.time,
+                            initialDateTime: DateTime(2024, 1, 1, _selectedTime.hour, _selectedTime.minute),
+                            use24hFormat: false,
+                            onDateTimeChanged: (DateTime newDateTime) {
+                              setState(() {
+                                _selectedTime = TimeOfDay(hour: newDateTime.hour, minute: newDateTime.minute);
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+          ),
+
+          // Checkbox Toggle: I don't know my birth time
           GestureDetector(
             onTap: () => setState(() => _isTimeUnknown = !_isTimeUnknown),
-            child: Row(
-              children: [
-                Checkbox(
-                  value: _isTimeUnknown,
-                  onChanged: (val) => setState(() => _isTimeUnknown = val ?? false),
-                  activeColor: const Color(0xFF2C2823),
-                  checkColor: Colors.white,
-                ),
-                const Text('I don\'t know my birth time (Approximate chart used)', style: TextStyle(color: Color(0xFF666056), fontSize: 11)),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Checkbox(
+                    value: _isTimeUnknown,
+                    onChanged: (val) => setState(() => _isTimeUnknown = val ?? false),
+                    activeColor: const Color(0xFF2C2823),
+                    checkColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                  ),
+                  Flexible(
+                    child: Text(
+                      'I don\'t know my birth time (Approximate chart used)',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF5A5349),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 40),
-          ElevatedButton(
-            onPressed: () => setState(() => _step = 5),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFF2EBDC),
-              foregroundColor: const Color(0xFF2C2823),
-              elevation: 0,
-              side: const BorderSide(color: Color(0xFF332E27), width: 1),
-              minimumSize: const Size.fromHeight(54),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-            ),
-            child: Text('Continue', style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600)),
+
+          // Continue Button & Security Footer (matching Date & Born screens)
+          Column(
+            children: [
+              ElevatedButton(
+                onPressed: () => setState(() => _step = 5),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFF2EBDC),
+                  foregroundColor: const Color(0xFF2C2823),
+                  elevation: 0,
+                  side: const BorderSide(color: Color(0xFF332E27), width: 1),
+                  minimumSize: const Size.fromHeight(56),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                ),
+                child: Text(
+                  'Continue',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF2C2823),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(LucideIcons.lock, size: 12, color: Color(0xFF888075)),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Never shared. Stored only on your device',
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      color: const Color(0xFF888075),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
           ),
         ],
       ),
