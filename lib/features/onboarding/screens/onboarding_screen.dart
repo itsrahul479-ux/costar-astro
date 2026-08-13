@@ -569,27 +569,134 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           ),
                         ),
 
-                        // Cupertino Time Picker Wheel
-                        CupertinoTheme(
-                          data: CupertinoThemeData(
-                            textTheme: CupertinoTextThemeData(
-                              dateTimePickerTextStyle: GoogleFonts.cormorantGaramond(
-                                fontSize: 24,
-                                color: const Color(0xFF2C2823),
-                                fontWeight: FontWeight.w500,
+                        // Custom 3-Column Time Wheel (Hour, Minute, Period AM/PM)
+                        Row(
+                          children: [
+                            // Hour Wheel (1 - 12)
+                            Expanded(
+                              child: CupertinoPicker(
+                                scrollController: FixedExtentScrollController(
+                                  initialItem: (_selectedTime.hourOfPeriod == 0 ? 12 : _selectedTime.hourOfPeriod) - 1,
+                                ),
+                                itemExtent: 44,
+                                magnification: 1.15,
+                                useMagnifier: true,
+                                looping: true,
+                                selectionOverlay: const SizedBox(), // Clean overlay as parent container provides pill
+                                onSelectedItemChanged: (int index) {
+                                  final newHour12 = index + 1;
+                                  final isPM = _selectedTime.period == DayPeriod.pm;
+                                  final newHour24 = isPM
+                                      ? (newHour12 == 12 ? 12 : newHour12 + 12)
+                                      : (newHour12 == 12 ? 0 : newHour12);
+                                  setState(() {
+                                    _selectedTime = TimeOfDay(hour: newHour24, minute: _selectedTime.minute);
+                                  });
+                                },
+                                children: List.generate(12, (index) {
+                                  final h = index + 1;
+                                  return Center(
+                                    child: Text(
+                                      '$h',
+                                      style: GoogleFonts.cormorantGaramond(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color(0xFF2C2823),
+                                      ),
+                                    ),
+                                  );
+                                }),
                               ),
                             ),
-                          ),
-                          child: CupertinoDatePicker(
-                            mode: CupertinoDatePickerMode.time,
-                            initialDateTime: DateTime(2024, 1, 1, _selectedTime.hour, _selectedTime.minute),
-                            use24hFormat: false,
-                            onDateTimeChanged: (DateTime newDateTime) {
-                              setState(() {
-                                _selectedTime = TimeOfDay(hour: newDateTime.hour, minute: newDateTime.minute);
-                              });
-                            },
-                          ),
+
+                            // Colon separator
+                            Text(
+                              ':',
+                              style: GoogleFonts.cormorantGaramond(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF2C2823),
+                              ),
+                            ),
+
+                            // Minute Wheel (00 - 59)
+                            Expanded(
+                              child: CupertinoPicker(
+                                scrollController: FixedExtentScrollController(
+                                  initialItem: _selectedTime.minute,
+                                ),
+                                itemExtent: 44,
+                                magnification: 1.15,
+                                useMagnifier: true,
+                                looping: true,
+                                selectionOverlay: const SizedBox(),
+                                onSelectedItemChanged: (int index) {
+                                  setState(() {
+                                    _selectedTime = TimeOfDay(hour: _selectedTime.hour, minute: index);
+                                  });
+                                },
+                                children: List.generate(60, (index) {
+                                  final m = index.toString().padLeft(2, '0');
+                                  return Center(
+                                    child: Text(
+                                      m,
+                                      style: GoogleFonts.cormorantGaramond(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color(0xFF2C2823),
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ),
+
+                            // Period Wheel (AM / PM)
+                            Expanded(
+                              child: CupertinoPicker(
+                                scrollController: FixedExtentScrollController(
+                                  initialItem: _selectedTime.period == DayPeriod.am ? 0 : 1,
+                                ),
+                                itemExtent: 44,
+                                magnification: 1.15,
+                                useMagnifier: true,
+                                looping: false,
+                                selectionOverlay: const SizedBox(),
+                                onSelectedItemChanged: (int index) {
+                                  final isPM = index == 1;
+                                  final currentHourOfPeriod = _selectedTime.hourOfPeriod == 0 ? 12 : _selectedTime.hourOfPeriod;
+                                  final newHour24 = isPM
+                                      ? (currentHourOfPeriod == 12 ? 12 : currentHourOfPeriod + 12)
+                                      : (currentHourOfPeriod == 12 ? 0 : currentHourOfPeriod);
+                                  setState(() {
+                                    _selectedTime = TimeOfDay(hour: newHour24, minute: _selectedTime.minute);
+                                  });
+                                },
+                                children: [
+                                  Center(
+                                    child: Text(
+                                      'AM',
+                                      style: GoogleFonts.cormorantGaramond(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color(0xFF2C2823),
+                                      ),
+                                    ),
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      'PM',
+                                      style: GoogleFonts.cormorantGaramond(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color(0xFF2C2823),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
