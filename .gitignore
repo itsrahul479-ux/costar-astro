@@ -32,3 +32,5 @@ ios/Flutter/Flutter.podspec
 *.swp
 *.DS_Store
 Thumbs.db
+
+.vercel

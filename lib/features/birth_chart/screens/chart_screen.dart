@@ -80,6 +80,22 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  // Element & Aspect Color Legend
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 12,
+                    runSpacing: 6,
+                    children: [
+                      _legendDot(const Color(0xFFFF5722), 'Fire'),
+                      _legendDot(const Color(0xFF10B981), 'Earth'),
+                      _legendDot(const Color(0xFF06B6D4), 'Air'),
+                      _legendDot(const Color(0xFF8B5CF6), 'Water'),
+                      _legendDot(const Color(0xFF38BDF8), 'Trine'),
+                      _legendDot(const Color(0xFFEF4444), 'Square'),
+                      _legendDot(const Color(0xFFFACC15), 'Conjunction'),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -164,6 +180,24 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _legendDot(Color color, String label) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 7,
+          height: 7,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 9, color: Colors.grey, fontFamily: 'monospace'),
+        ),
+      ],
     );
   }
 
